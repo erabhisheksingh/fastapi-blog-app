@@ -96,7 +96,10 @@ $  docker run -p8000:8000 fastapi-blog-api:0.0.1
 
 ```
 
-**Note**:
+### Notes
+
+* The application can switch between the `SQLite` and `MySQL` databases.
+* This can be achieved by uncommenting the Database configuration in the file `database.py` under the `databases` module
 
 ### Check it
 
