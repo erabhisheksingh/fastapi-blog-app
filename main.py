@@ -93,13 +93,13 @@ def update_blog(id: int, request: blog.Blog, db: Session = Depends(get_db)):
     blog_in_db = db.query(schema.BlogModel).filter(schema.BlogModel.id == id).first()
     if not blog:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"The Blog with the Id {id} is not found")
-    else:
-        blog_in_db.title = request.title
-        blog_in_db.body = request.body
-        blog_in_db.author = request.author 
-        blog_in_db.published = request.published 
-        db.commit()
-        db.refresh(blog_in_db)
+    
+    blog_in_db.title = request.title
+    blog_in_db.body = request.body
+    blog_in_db.author = request.author 
+    blog_in_db.published = request.published 
+    db.commit()
+    db.refresh(blog_in_db)
     return blog_in_db
 
 @app.delete("/blogs/{id}", status_code=status.HTTP_200_OK)
@@ -119,9 +119,9 @@ def delete(id: int, db: Session = Depends(get_db)):
     blog = db.query(schema.BlogModel).filter(schema.BlogModel.id == id).first()
     if not blog:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"The Blog with the Id {id} is not found")
-    else:
-        db.delete(blog)
-        db.commit()
+    
+    db.delete(blog)
+    db.commit()
     return blog
 
 
