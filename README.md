@@ -103,7 +103,23 @@ $  docker run -p8000:8000 fastapi-blog-api:0.0.1
 
 ### Check it
 
-Open your browser at <a href="http://127.0.0.1:8000/blogs/all" class="external-link" target="_blank">http://127.0.0.1:8000/blogs</a>
+Open your browser at <a href="http://127.0.0.1:8000/blogs/" class="external-link" target="_blank">http://127.0.0.1:8000/blogs</a>
+
+You need to POST a blog request as:
+
+```JSON
+[
+    {
+        "published": true,
+        "title": "The Dark Knight",
+        "body": "This blog is on Batman and his fight against Evil",
+        "author": "Bruce Wayne",
+    }
+]
+```
+</br>
+
+Open your browser at <a href="http://127.0.0.1:8000/blogs/all" class="external-link" target="_blank">http://127.0.0.1:8000/blogs/all</a>
 
 You will see the JSON response as:
 
@@ -121,11 +137,19 @@ You will see the JSON response as:
 </br>
 
 ---
-You have an API that:
+You have a Blog API that:
 
 * Receives HTTP requests in the _paths_ `/blogs` and `/blogs/{id}`.
 * The _paths_ take `GET`, `POST`, `PUT` and `DELETE` <em>operations</em> (also known as HTTP _methods_).
 * The _path_ `/blogs/{id}` has a _path parameter_ `id` that should be an `int`.
+
+</br>
+
+You have a User API that:
+
+* Receives HTTP requests in the _paths_ `/users` and `/users/{id}`.
+* The _paths_ take `GET`, `POST`, `PUT` and `DELETE` <em>operations</em> (also known as HTTP _methods_).
+* The _path_ `/user/{id}` has a _path parameter_ `id` that should be an `int`.
 
 ---
 
