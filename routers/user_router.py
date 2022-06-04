@@ -1,15 +1,16 @@
-
-from typing import List
-from fastapi import APIRouter, status, Depends, HTTPException, Response
-from sqlalchemy.orm import Session
-from models import blog
 from databases import database
-from schemas import schema
+from fastapi import APIRouter, Depends, status
+from models import blog
+from repository import user_repository as userrepo
 from security import hashing
+from sqlalchemy.orm import Session
 
-userroute = APIRouter()
+userroute = APIRouter(
+    prefix = "/users",
+    tags = ['Users']
+)
 
-@userroute.post("/users", status_code=status.HTTP_201_CREATED, response_model=blog.UserResponse, tags=['Users'])
+@userroute.post("/", status_code=status.HTTP_201_CREATED, response_model=blog.UserResponse)
 def create_user(request: blog.User, db: Session = Depends(database.get_db)):
 
     """
@@ -24,15 +25,11 @@ def create_user(request: blog.User, db: Session = Depends(database.get_db)):
     """
     
     hashed_password = hashing.Hash.hash(request.password)
-    new_user = schema.UserModel(username = request.username, password = hashed_password)
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    return new_user
+    return userrepo.create_user(request, hashed_password, db)
 
 
-@userroute.get("/users/{id}", status_code=status.HTTP_200_OK, response_model=blog.UserResponse, tags=['Users'])
-def get_user(id: int, response: Response, db: Session = Depends(database.get_db)):
+@userroute.get("/{id}", status_code=status.HTTP_200_OK, response_model=blog.UserResponse)
+def get_user(id: int, db: Session = Depends(database.get_db)):
     
     """
     This function is used to GET a user 
@@ -41,13 +38,8 @@ def get_user(id: int, response: Response, db: Session = Depends(database.get_db)
     ----------
     id: int
         The id of the blog
-    request : blog.Blog
-        The request body of the type Blog
     db : str
         The db instance
     """
     
-    user = db.query(schema.UserModel).filter(schema.UserModel.id == id).first()
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"The User with the Id {id} is not found")
-    return user
+    return userrepo.get_user(id, db)

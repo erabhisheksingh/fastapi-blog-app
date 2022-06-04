@@ -1,7 +1,7 @@
+from databases import database
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column, ForeignKey
-from sqlalchemy.types import Integer, String, Boolean
-from databases import database
+from sqlalchemy.types import Boolean, Integer, String
 
 '''
 class BlogModel(database.Base):

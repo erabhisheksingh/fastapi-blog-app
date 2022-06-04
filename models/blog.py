@@ -1,4 +1,5 @@
-from typing import Optional, List
+from typing import List, Optional
+
 from pydantic import BaseModel
 
 
@@ -77,7 +78,7 @@ class Blog(BaseModel):
     author: str
     published: Optional[bool]
     user_id: Optional[int] = None
-    creator: UserResponse = None
+    creator: UserResponse
     
     
 
@@ -106,3 +107,21 @@ class BlogResponse(Blog):
         orm_mode = True
 
 
+class Login(BaseModel):
+
+    """
+    This class is the Base class for the Login request body
+    
+    ...
+
+    Attributes
+    ----------
+    username : str
+        the username of the user
+    password : str
+        the password of the user
+
+    """
+    
+    username: str
+    password: str

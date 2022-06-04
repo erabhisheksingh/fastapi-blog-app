@@ -1,13 +1,17 @@
 from typing import List
-from fastapi import APIRouter, status, Depends, HTTPException, Response
-from sqlalchemy.orm import Session
-from models import blog
+
 from databases import database
-from schemas import schema
+from fastapi import APIRouter, Depends, Response, status
+from models import blog
+from repository import blog_repository as blogrepo
+from sqlalchemy.orm import Session
 
-blogroute = APIRouter()
+blogroute = APIRouter(
+    prefix = "/blogs",
+    tags = ['Blogs']
+)
 
-@blogroute.get("/blogs/all", status_code=status.HTTP_200_OK, response_model=List[blog.BlogResponse], tags=['Blogs'])
+@blogroute.get("/all", status_code=status.HTTP_200_OK, response_model=List[blog.BlogResponse])
 def get_all_blogs(db: Session = Depends(database.get_db)):
     
     """
@@ -19,9 +23,9 @@ def get_all_blogs(db: Session = Depends(database.get_db)):
         The db instance
     """
     
-    return db.query(schema.BlogModel).all()
+    return blogrepo.get_all(db)
 
-@blogroute.post("/blogs", status_code=status.HTTP_201_CREATED, response_model=blog.BlogResponse, tags=['Blogs'])
+@blogroute.post("/", status_code=status.HTTP_201_CREATED, response_model=blog.BlogResponse)
 def post_blog(request: blog.Blog, db: Session = Depends(database.get_db)):
     
     """
@@ -35,13 +39,9 @@ def post_blog(request: blog.Blog, db: Session = Depends(database.get_db)):
         The db instance
     """
     
-    new_blog = schema.BlogModel(title = request.title, body = request.body, author = request.author, published = request.published)
-    db.add(new_blog)
-    db.commit()
-    db.refresh(new_blog)
-    return new_blog
+    return blogrepo.post_blog(request, db)
 
-@blogroute.get("/blogs/{id}", status_code=status.HTTP_200_OK, response_model=blog.BlogResponse, tags=['Blogs'])
+@blogroute.get("/{id}", status_code=status.HTTP_200_OK, response_model=blog.BlogResponse)
 def get_blog(id: int, response: Response, db: Session = Depends(database.get_db)):
     
     """
@@ -57,12 +57,9 @@ def get_blog(id: int, response: Response, db: Session = Depends(database.get_db)
         The db instance
     """
     
-    blog = db.query(schema.BlogModel).filter(schema.BlogModel.id == id).first()
-    if not blog:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"The Blog with the Id {id} is not found")
-    return blog
+    return blogrepo.get_blog(id, db)
 
-@blogroute.put("/blogs/{id}", status_code=status.HTTP_201_CREATED, response_model=blog.BlogResponse, tags=['Blogs'])
+@blogroute.put("/{id}", status_code=status.HTTP_201_CREATED, response_model=blog.BlogResponse)
 def update_blog(id: int, request: blog.Blog, db: Session = Depends(database.get_db)):
     
     """
@@ -78,19 +75,9 @@ def update_blog(id: int, request: blog.Blog, db: Session = Depends(database.get_
         The db instance
     """ 
     
-    blog_in_db = db.query(schema.BlogModel).filter(schema.BlogModel.id == id).first()
-    if not blog:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"The Blog with the Id {id} is not found")
-    
-    blog_in_db.title = request.title
-    blog_in_db.body = request.body
-    blog_in_db.author = request.author 
-    blog_in_db.published = request.published 
-    db.commit()
-    db.refresh(blog_in_db)
-    return blog_in_db
+    return blogrepo.update_blog(id, request, db)
 
-@blogroute.delete("/blogs/{id}", status_code=status.HTTP_200_OK, response_model=blog.BlogResponse, tags=['Blogs'])
+@blogroute.delete("/{id}", status_code=status.HTTP_200_OK, response_model=blog.BlogResponse)
 def delete(id: int, db: Session = Depends(database.get_db)):
     
     """
@@ -104,10 +91,4 @@ def delete(id: int, db: Session = Depends(database.get_db)):
         The db instance
     """
     
-    blog = db.query(schema.BlogModel).filter(schema.BlogModel.id == id).first()
-    if not blog:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"The Blog with the Id {id} is not found")
-    
-    db.delete(blog)
-    db.commit()
-    return blog
+    return blogrepo.delete_blog(id, db)
