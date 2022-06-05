@@ -3,7 +3,7 @@
 </p>
 <!-- PROJECT LOGO -->
 <div align="center">
-  <h3 align="center">A ToDo application built using FastAPI, SQLAlchemy and a choice of either SQLite or MYSQL Databse for persisiting the Blogs.</h3>
+  <h3 align="center">A simple Blog application built using FastAPI, SQLAlchemy and a choice of either SQLite or MYSQL Databse for persisiting the Blogs.</h3>
 
   <p align="center">
     <br />
