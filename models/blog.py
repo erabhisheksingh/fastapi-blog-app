@@ -125,3 +125,41 @@ class Login(BaseModel):
     
     username: str
     password: str
+    
+    class Config():
+        orm_mode = True
+
+class Token(BaseModel):
+    
+    """
+    This class is the Base class for the JWT Token response body
+    
+    ...
+
+    Attributes
+    ----------
+    access_token : str
+        the jwt token of the user
+    token_type : str
+        the token type of the user
+
+    """
+    
+    access_token: str
+    token_type: str
+    
+class TokenData(BaseModel):
+    
+    """
+    This class is the Base class for the JWT Token request body
+    
+    ...
+
+    Attributes
+    ----------
+    username : Optional[str]
+        the username of the user
+
+    """
+    
+    username: Optional[str] = None
